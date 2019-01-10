@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'shop.apps.ShopConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -76,10 +77,10 @@ WSGI_APPLICATION = 'wbd.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.oracle',
-        'NAME': 'ora3inf',
-        'USER': 'kmusolff',
-        'PASSWORD': 'kmusolff',
-        'HOST': 'ora3.elka.pw.edu.pl',
+        'NAME': 'wbd',
+        'USER': 'SYSTEM',
+        'PASSWORD': 'projekt',
+        'HOST': 'localhost',
         'PORT': '1521',
     }
 }
