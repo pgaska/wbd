@@ -1,0 +1,44 @@
+.header {
+  background-color: #000099;
+  text-align: center;
+  color: #FFFFFF;
+  height: 170px;
+}
+
+.header h1 {
+    padding: 100px 20px;
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: #000099;
+  text-align: center;
+  padding: 10px;
+}
+
+.index-left {
+    margin:2em;
+    margin-top: 4em;
+    height: 8em;
+}
+
+.index-right {
+    margin-left: 9em;
+    margin-top: 5em;
+}
+
+.index-right input {
+    margin: 0.5em;
+}
+
+.index-right button {
+    margin-left: 0.5em;
+}
+
+.eiti-logo {
+    text-align: center;
+    top: 0;
+}

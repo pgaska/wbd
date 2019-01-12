@@ -1,0 +1,18 @@
+<link rel="stylesheet" href="../../static/shop/style.css">{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'shop/style.css' %}">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+
+<p>{{hurtownia.id_hurtowni}}</p>
+<p>{{hurtownia.nazwa}}</p>
+<p>{{hurtownia.nip}}</p>
+<p>{{hurtownia.regon}}</p>
+<p>{{hurtownia.miejscowosc}}</p>
+<p>{{hurtownia.ulica}}</p>
+<p>{{hurtownia.nr_budynku}}</p>
+{% if hurtownia.nr_lokalu %}
+    <p>{{hurtownia.nr_lokalu}}</p>
+{% endif %}
+<p>{{hurtownia.id_poczty.miasto}}</p>
+<p>{{hurtownia.id_poczty.kod_pocztowy}}</p>
