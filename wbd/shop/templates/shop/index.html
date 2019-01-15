@@ -14,13 +14,14 @@
           <p class="lead">Zaloguj się i składaj zamówienia w największej hurtowni elektroniki w Polsce online!</p>
       </div>
       <div class="col-lg-5 order-1 order-lg-2">
-          <form>
+          <form action="/login/" method="post">
+              {% csrf_token %}
               <div class="form-row">
                   <div class="form-group col-lg-5 index-right">
                       <h5>LOGOWANIE</h5>
-                      <input type="text" class="form-control" placeholder="Login">
-                      <input type="password" class="form-control" placeholder="Hasło">
-                      <button type="submit" class="btn btn-primary mb-2">Zaloguj się</button>
+                      <input type="text" class="form-control" placeholder="Login" name="username">
+                      <input type="password" class="form-control" placeholder="Hasło" name="password">
+                      <input type="submit" class="btn btn-primary mb-2" value="Zaloguj się">
                   </div>
               </div>
           </form>

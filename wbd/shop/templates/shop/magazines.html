@@ -4,6 +4,7 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
 
+
 <div class="header">
     <h1>Hurtownia części elektronicznych</h1>
 </div>
@@ -37,18 +38,19 @@
   </div>
 </nav>
 
-<p>{{hurtownia.id_hurtowni}}</p>
-<p>{{hurtownia.nazwa}}</p>
-<p>{{hurtownia.nip}}</p>
-<p>{{hurtownia.regon}}</p>
-<p>{{hurtownia.miejscowosc}}</p>
-<p>{{hurtownia.ulica}}</p>
-<p>{{hurtownia.nr_budynku}}</p>
-{% if hurtownia.nr_lokalu %}
-    <p>{{hurtownia.nr_lokalu}}</p>
-{% endif %}
-<p>{{hurtownia.id_poczty.miasto}}</p>
-<p>{{hurtownia.id_poczty.kod_pocztowy}}</p>
+<div class="container-fluid">
+    <div class="row">
+            <div class="col-lg-6 order-1 order-lg-2">
+                <form class="form-inline active-cyan-3 active-cyan-4">
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input class="form-control form-control-sm ml-3 w-75" type="text" placeholder="Szukaj" aria-label="Search">
+                </form>
+            </div>
+        <div class="col-lg-5 order-1 order-lg-2">
+            <button type="button" class="btn btn-primary">Dodaj magazyn</button>
+        </div>
+    </div>
+</div>
 
 <div class="footer">
 
