@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 
-from .models import Hurtownie, Poczta
+from .models import Hurtownie, Poczta, Magazyny
 
 # Create your views here.
 def index(request):
@@ -34,7 +34,8 @@ def logout_view(request):
     return redirect(index)
 
 def magazines(request):
-    return render(request, 'shop/magazines.html')
+    magazyny = Magazyny.objects.all()
+    return render(request, 'shop/magazines.html', {'magazyny':magazyny})
 
 def workers(request):
     pass
