@@ -4,6 +4,7 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
 
+
 <div class="header">
     <h1>Hurtownia części elektronicznych</h1>
 </div>
@@ -15,10 +16,10 @@
   <!--</button>-->
   <div class="collapse navbar-collapse" id="navvbarNav">
     <ul class="navbar-nav">
-      <li class="nav-item active">
+      <li class="nav-item">
         <a class="nav-link" href="/hurtownia/">Dane hurtowni <span class="sr-only">(current)</span></a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item active">
         <a class="nav-link" href="/magazines/">Magazyny</a>
       </li>
       <li class="nav-item">
@@ -37,18 +38,33 @@
   </div>
 </nav>
 
-<p>{{hurtownia.id_hurtowni}}</p>
-<p>{{hurtownia.nazwa}}</p>
-<p>{{hurtownia.nip}}</p>
-<p>{{hurtownia.regon}}</p>
-<p>{{hurtownia.miejscowosc}}</p>
-<p>{{hurtownia.ulica}}</p>
-<p>{{hurtownia.nr_budynku}}</p>
-{% if hurtownia.nr_lokalu %}
-    <p>{{hurtownia.nr_lokalu}}</p>
-{% endif %}
-<p>{{hurtownia.id_poczty.miasto}}</p>
-<p>{{hurtownia.id_poczty.kod_pocztowy}}</p>
+<div class="container-fluid">
+  <form action="/post_magazine/" method="post">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="miejscowosc">Miejscowość: </label>
+      <input id="miejscowosc" class="form-control" type="text" name="miejscowosc">
+    </div>
+    <div class="form-group">
+      <label for="ulica">Ulica: </label>
+      <input id="ulica" class="form-control" type="text" name="ulica">
+    </div>
+    <div class="form-group">
+      <label for="nr_budynku">Numer budynku: </label>
+      <input id="nr_budynku" class="form-control" type="text" name="nr_budynku">
+    </div>
+    <div class="form-group">
+      <label for="nr_lokalu">Numer lokalu: </label>
+      <input id="nr_lokalu" class="form-control" type="text" name="nr_lokalu">
+    </div>
+    <div class="form-group">
+      <label for="powierzchnia">Powierzchnia: </label>
+      <input id="powierzchnia" class="form-control" type="number" step="0.01" name="powierzchnia">
+    </div>
+    <a href="/magazines/"><button type="button" class="btn btn-secondary">Anuluj</button></a>
+    <input type="submit" class="btn btn-primary" value="Dodaj">
+  </form>
+</div>
 
 <div class="footer">
 
