@@ -87,6 +87,28 @@ class Poczta(models.Model):
         managed = False
         db_table = 'poczta'
 
+class Pracownicy(models.Model):
+    id_pracownika = models.BigIntegerField(primary_key=True)
+    imie = models.CharField(max_length=20)
+    nazwisko = models.CharField(max_length=40)
+    miejscowosc = models.CharField(max_length=30)
+    ulica = models.CharField(max_length=40, blank=True, null=True)
+    nr_budynku = models.CharField(max_length=4)
+    nr_lokalu = models.CharField(max_length=4, blank=True, null=True)
+    pesel = models.CharField(max_length=11, blank=True, null=True)
+    data_urodzenia = models.DateField()
+    stanowisko = models.CharField(max_length=30)
+    adres_e_mail = models.CharField(db_column='adres_e-mail', max_length=50)  # Field renamed to remove unsuitable characters.
+    nr_telefonu = models.CharField(max_length=15)
+    data_zatrudniena = models.DateField()
+    id_hurtowni = models.BigIntegerField()
+    id_punktu_sprzedazy = models.BigIntegerField(blank=True, null=True)
+    id_magazynu = models.BigIntegerField(blank=True, null=True)
+    id_poczty = models.BigIntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'pracownicy'
 
 class Procesor(models.Model):
     id_procesora = models.BigIntegerField(primary_key=True)

@@ -19,10 +19,10 @@
       <li class="nav-item">
         <a class="nav-link" href="/hurtownia/">Dane hurtowni <span class="sr-only">(current)</span></a>
       </li>
-      <li class="nav-item active">
+      <li class="nav-item">
         <a class="nav-link" href="/magazines/">Magazyny</a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item active">
         <a class="nav-link" href="/workers/">Pracownicy</a>
       </li>
       <li class="nav-item">
@@ -41,14 +41,14 @@
 <div class="container-fluid">
     <div class="row">
             <div class="col-lg-10 order-1 order-lg-2">
-                <form class="form-inline mr-auto" action="/filter_magazines/" method="get">
+                <form class="form-inline mr-auto" action="/filter_workers/" method="get">
                     <input class="form-control mr-sm-2" type="text" placeholder="Szukaj" aria-label="Search" name="search">
                     <button class="btn btn-primary form-control mr-sm-2" type="submit">Szukaj</button>
-                    <a href="/magazines/"><button type="button" class="btn btn-secondary form-control mr-sm-2">Resetuj filtr</button></a>
+                    <a href="/workers/"><button type="button" class="btn btn-secondary form-control mr-sm-2">Resetuj filtr</button></a>
                 </form>
             </div>
         <div class="col-lg-2 order-1 order-lg-2">
-            <a href="/add_magazine/"><button type="button" class="btn btn-primary">Dodaj magazyn</button></a>
+            <a href="/add_worker/"><button type="button" class="btn btn-primary">Dodaj pracownika</button></a>
         </div>
     </div>
     <div class="row">
@@ -57,26 +57,26 @@
                 <thead>
                 <tr>
                   <th scope="col">#</th>
-                  <th scope="col">Miejscowość</th>
-                  <th scope="col">Ulica</th>
-                  <th scope="col">Numer budynku</th>
-                  <th scope="col">Numer lokalu</th>
-                  <th scope="col">Kod pocztowy
-                  <th scope="col">Powierzchnia
+                  <th scope="col">Imię</th>
+                  <th scope="col">Nazwisko</th>
+                  <th scope="col">Stanowisko</th>
+                  <th scope="col">PESEL</th>
+                  <th scope="col">E-mail</th>
+                  <th scope="col">Numer telefonu</th>
                   <th scope="col"></th>
                 </tr>
               </thead>
                 <tbody>
-                {% for magazyn in magazyny %}
+                {% for pracownik in pracownicy %}
                 <tr>
                     <th scope="row">{{ forloop.counter }}</th>
-                    <td>{{ magazyn.miejscowosc }}</td>
-                    <td>{{ magazyn.ulica }}</td>
-                    <td>{{ magazyn.nr_budynku }}</td>
-                    <td>{{ magazyn.nr_lokalu }}</td>
-                    <td>{{ magazyn.id_poczty.kod_pocztowy }}</td>
-                    <td>{{ magazyn.powierzchnia }}</td>
-                    <td><a href="{% url 'magazine_details' magazyn.id_magazynu %}"><button type="button" class="btn btn-info">Szczegóły</button></a></td>
+                    <td>{{pracownik.imie}}</td>
+                    <td>{{pracownik.nazwisko}}</td>
+                    <td>{{pracownik.stanowisko}}</td>
+                    <td>{{pracownik.pesel}}</td>
+                    <td>{{pracownik.adres_e_mail}}</td>
+                    <td>{{pracownik.nr_telefonu}}</td>
+                    <td><a href="{% url 'worker_details' pracownik.id_pracownika %}"><button type="button" class="btn btn-info">Szczegóły</button></a></td>
                 </tr>
                 {% endfor %}
                 </tbody>

@@ -3,7 +3,21 @@
 <link rel="stylesheet" type="text/css" href="{% static 'shop/style.css' %}">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
-
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+<script>
+    $(document).ready(function(){
+        var date_input=$('input[name="data_urodzenia"]'); //our date input has the name "date"
+        var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
+        date_input.datepicker({
+            format: 'mm/dd/yyyy',
+            container: container,
+            todayHighlight: true,
+            autoclose: true,
+        })
+    })
+</script>
 
 <div class="header">
     <h1>Hurtownia części elektronicznych</h1>
@@ -19,10 +33,10 @@
       <li class="nav-item">
         <a class="nav-link" href="/hurtownia/">Dane hurtowni <span class="sr-only">(current)</span></a>
       </li>
-      <li class="nav-item active">
+      <li class="nav-item">
         <a class="nav-link" href="/magazines/">Magazyny</a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item active">
         <a class="nav-link" href="/workers/">Pracownicy</a>
       </li>
       <li class="nav-item">
@@ -39,17 +53,29 @@
 </nav>
 
 <div class="container-fluid">
-  <form action="/post_magazine/" method="post">
+  <form action="/post_worker/" method="post">
     {% csrf_token %}
+    <div class="form-group">
+      <label for="imie">Imię<span style="color:red">*</span></label>
+      <input id="imie" class="form-control" type="text" name="imie">
+    </div>
+    <div class="form-group">
+      <label for="nazwisko">Nazwisko<span style="color:red">*</span></label>
+      <input id="nazwisko" class="form-control" type="text" name="nazwisko">
+    </div>
+    <div class="form-group">
+        <label class="control-label" for="data_urodzenia">Data urodzenia<span style="color:red">*</span></label>
+        <input class="form-control" id="data_urodzenia" name="data_urodzenia" placeholder="MM/DD/YYYY" type="text"/>
+    </div>
     <div class="form-group">
       <label for="miejscowosc">Miejscowość<span style="color:red">*</span></label>
       <input id="miejscowosc" class="form-control" type="text" name="miejscowosc">
     </div>
     <div class="form-group">
+    <div class="form-group">
       <label for="ulica">Ulica</label>
       <input id="ulica" class="form-control" type="text" name="ulica">
     </div>
-    <div class="form-group">
       <label for="nr_budynku">Numer budynku<span style="color:red">*</span></label>
       <input id="nr_budynku" class="form-control" type="text" name="nr_budynku">
     </div>
@@ -58,10 +84,29 @@
       <input id="nr_lokalu" class="form-control" type="text" name="nr_lokalu">
     </div>
     <div class="form-group">
-      <label for="powierzchnia">Powierzchnia<span style="color:red">*</span></label>
-      <input id="powierzchnia" class="form-control" type="number" step="0.01" name="powierzchnia">
+      <label for="pesel">PESEL</label>
+      <input id="pesel" class="form-control" type="text" name="pesel">
     </div>
-    <a href="/magazines/"><button type="button" class="btn btn-secondary">Anuluj</button></a>
+    <div class="form-group">
+      <label for="adres_e_mail">E-mail<span style="color:red">*</span></label>
+      <input id="adres_e_mail" class="form-control" type="email"name="adres_e_mail">
+    </div>
+    <div class="form-group">
+      <label for="nr_telefonu">Numer telefonu<span style="color:red">*</span></label>
+      <input id="nr_telefonu" class="form-control" type="text" name="nr_telefonu">
+    </div>
+    <div class="form-group">
+      <label for="stanowisko">Stanowisko<span style="color:red">*</span></label>
+      <select id="stanowisko" class="form-control" name="stanowisko">
+        <option>Ksiegowosc</option>
+        <option>Obsluga magazynu</option>
+        <option>Realizacja zamowien</option>
+        <option>Zarzadzanie magazynem</option>
+        <option>HR</option>
+        <option>Zarzad</option>
+      </select>
+    </div>
+    <a href="/workers/"><button type="button" class="btn btn-secondary">Anuluj</button></a>
     <input type="submit" class="btn btn-primary" value="Dodaj">
   </form>
 </div>

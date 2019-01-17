@@ -19,13 +19,13 @@
       <li class="nav-item">
         <a class="nav-link" href="/hurtownia/">Dane hurtowni <span class="sr-only">(current)</span></a>
       </li>
-      <li class="nav-item active">
+      <li class="nav-item">
         <a class="nav-link" href="/magazines/">Magazyny</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="/workers/">Pracownicy</a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item active">
         <a class="nav-link" href="/goods/">Towary</a>
       </li>
       <li class="nav-item disabled">
@@ -70,13 +70,13 @@
                 {% for magazyn in magazyny %}
                 <tr>
                     <th scope="row">{{ forloop.counter }}</th>
-                    <td>{{ magazyn.miejscowosc }}</td>
-                    <td>{{ magazyn.ulica }}</td>
-                    <td>{{ magazyn.nr_budynku }}</td>
-                    <td>{{ magazyn.nr_lokalu }}</td>
-                    <td>{{ magazyn.id_poczty.kod_pocztowy }}</td>
-                    <td>{{ magazyn.powierzchnia }}</td>
-                    <td><a href="{% url 'magazine_details' magazyn.id_magazynu %}"><button type="button" class="btn btn-info">Szczegóły</button></a></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td><a href="#"><button type="button" class="btn btn-info">Szczegóły</button></a></td>
                 </tr>
                 {% endfor %}
                 </tbody>
