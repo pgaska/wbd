@@ -6,8 +6,8 @@ from django.db.models import Max
 from datetime import date
 from django.core.exceptions import ValidationError
 
-from .models import Hurtownie, Poczta, Magazyny, Pracownicy
-from .forms import AddMagazine, AddWorker
+from .models import Hurtownie, Poczta, Magazyny, Pracownicy, Procesor, PlytaGlowna, Pamiec, KartaGraficzna, Towary
+from .forms import AddMagazine, AddWorker, ChooseType, AddKartaGraficzna, AddPamiec, AddPlytaGlowna, AddProcesor
 
 # Create your views here.
 def index(request):
@@ -159,7 +159,6 @@ def delete_worker(request, id_pracownika):
 def update_worker(request, id_pracownika):
     if request.method == 'POST':
         form = AddWorker(request.POST)
-        print(form)
         if form.is_valid():
             imie = form.cleaned_data['imie']
             nazwisko = form.cleaned_data['nazwisko']
@@ -180,4 +179,187 @@ def update_worker(request, id_pracownika):
             return redirect(workers)
 
 def goods(request):
-    return render(request, 'shop/goods.html')
+    procesory = Procesor.objects.all()
+    pamiec = Pamiec.objects.all()
+    karty_graficzne = KartaGraficzna.objects.all()
+    plyty_glowne = PlytaGlowna.objects.all()
+    towary=[]
+    for procesor in procesory:
+        towar = get_object_or_404(Towary, pk=procesor.id_towaru)
+        towary.append(towar)
+
+    for p in pamiec:
+        towar = get_object_or_404(Towary, pk=p.id_towaru)
+        towary.append(towar)
+
+    for karta_graficzna in karty_graficzne:
+        towar = get_object_or_404(Towary, pk=karta_graficzna.id_towaru)
+        towary.append(towar)
+
+    for plyta_glowna in plyty_glowne:
+        towar = get_object_or_404(Towary, pk=plyta_glowna.id_towaru)
+        towary.append(towar)
+    return render(request, 'shop/goods.html', {'towary':towary})
+
+def filter_goods(request):
+    query = request.GET.get('search')
+    if query:
+        result = Towary.objects.filter(produent__icontains=query) | Towary.objects.filter(kod_producenta__iexact=query) |\
+                 Towary.objects.filter(model__icontains=query) | Towary.objects.filter(cena__iexact=query)
+
+        return render(request, 'shop/goods.html', {'towary':result})
+
+def add_goods(request):
+    return render(request, 'shop/add_goods.html')
+
+def choose_type(request):
+    if request.method == 'POST':
+        form = ChooseType(request.POST)
+        print(form)
+        if form.is_valid():
+            typ = form.cleaned_data['typ']
+            if typ == 'Procesor':
+                return redirect(add_procesor)
+            elif typ == 'Pamięć':
+                return redirect(add_pamiec)
+            elif typ == 'Karta graficzna':
+                return redirect(add_karta_graficzna)
+            elif typ == 'Płyta główna':
+                return redirect(add_plyta_glowna)
+
+def add_procesor(request):
+    return render(request, 'shop/add_procesor.html')
+
+def add_karta_graficzna(request):
+    return render(request, 'shop/add_karta_graficzna.html')
+
+def add_pamiec(request):
+    return render(request, 'shop/add_pamiec.html')
+
+def add_plyta_glowna(request):
+    return render(request, 'shop/add_plyta_glowna.html')
+
+def post_procesor(request):
+    if request.method == 'POST':
+        form = AddProcesor(request.POST)
+        if form.is_valid():
+            id_towaru = Towary.objects.aggregate(Max('id_towaru')).get('id_towaru__max') + 1
+            producent = form.cleaned_data['produent']
+            kod_producenta = form.cleaned_data['kod_producenta']
+            model = form.cleaned_data['model']
+            cena = form.cleaned_data['cena']
+            id_magazynu = Magazyny.objects.all().first()
+            towar = Towary(id_towaru=id_towaru, produent=producent, kod_producenta=kod_producenta,
+                            model=model, cena=cena, id_magazynu=id_magazynu)
+            towar.save()
+
+            id_procesora = Procesor.objects.aggregate(Max('id_procesora')).get('id_procesora__max') + 1
+            liczba_rdzeni = form.cleaned_data['liczba_rdzeni']
+            taktowanie = form.cleaned_data['taktowanie']
+            procesor = Procesor(id_procesora=id_procesora, liczba_rdzeni=liczba_rdzeni, taktowanie=taktowanie, id_towaru=id_towaru)
+            procesor.save()
+
+            return redirect(goods)
+
+def post_pamiec(request):
+    if request.method == 'POST':
+        form = AddPamiec(request.POST)
+        if form.is_valid():
+            id_towaru = Towary.objects.aggregate(Max('id_towaru')).get('id_towaru__max') + 1
+            producent = form.cleaned_data['produent']
+            kod_producenta = form.cleaned_data['kod_producenta']
+            model = form.cleaned_data['model']
+            cena = form.cleaned_data['cena']
+            id_magazynu = Magazyny.objects.all().first()
+            towar = Towary(id_towaru=id_towaru, produent=producent, kod_producenta=kod_producenta,
+                           model=model, cena=cena,  id_magazynu=id_magazynu)
+            towar.save()
+
+            id_pamieci = Pamiec.objects.aggregate(Max('id_pamieci')).get('id_pamieci__max') + 1
+            typ_ = form.cleaned_data['typ']
+            pojemnosc = form.cleaned_data['pojemnosc']
+            pamiec = Pamiec(id_pamieci=id_pamieci, typ=typ_, pojemnosc=pojemnosc, id_towaru=id_towaru)
+            pamiec.save()
+
+            return redirect(goods)
+
+def post_plyta_glowna(request):
+    if request.method == 'POST':
+        form = AddPlytaGlowna(request.POST)
+        if form.is_valid():
+            id_towaru = Towary.objects.aggregate(Max('id_towaru')).get('id_towaru__max') + 1
+            producent = form.cleaned_data['produent']
+            kod_producenta = form.cleaned_data['kod_producenta']
+            model = form.cleaned_data['model']
+            cena = form.cleaned_data['cena']
+            id_magazynu = Magazyny.objects.all().first()
+            towar = Towary(id_towaru=id_towaru, produent=producent, kod_producenta=kod_producenta,
+                           model=model, cena=cena, id_magazynu=id_magazynu)
+            towar.save()
+
+            id_plyty_glownej = PlytaGlowna.objects.aggregate(Max('id_plyty_glownej')).get('id_plyty_glownej__max') + 1
+            chipset = form.cleaned_data['chipset']
+            standard_pamieci = form.cleaned_data['standard_pamieci']
+            plyta_glowna = PlytaGlowna(id_plyty_glownej=id_plyty_glownej, chipset=chipset,
+                                       standard_pamieci=standard_pamieci, id_towaru=id_towaru)
+            plyta_glowna.save()
+
+            return redirect(goods)
+
+def post_karta_graficzna(request):
+    if request.method == 'POST':
+        form = AddKartaGraficzna(request.POST)
+        print(form)
+        if form.is_valid():
+            id_towaru = Towary.objects.aggregate(Max('id_towaru')).get('id_towaru__max') + 1
+            producent = form.cleaned_data['produent']
+            kod_producenta = form.cleaned_data['kod_producenta']
+            model = form.cleaned_data['model']
+            cena = form.cleaned_data['cena']
+            id_magazynu = Magazyny.objects.all().first()
+            towar = Towary(id_towaru=id_towaru, produent=producent, kod_producenta=kod_producenta,
+                           model=model, cena=cena, id_magazynu=id_magazynu)
+            towar.save()
+
+            id_karty_graficznej = KartaGraficzna.objects.aggregate(Max('id_karty_graficznej')).get(
+                'id_karty_graficznej__max') + 1
+            ilosc_pamieci = form.cleaned_data['ilosc_pamieci']
+            rodzaj_pamieci = form.cleaned_data['rodzaj_pamieci']
+            szyna = form.cleaned_data['szyna']
+            karta_graficzna = KartaGraficzna(id_karty_graficznej=id_karty_graficznej, ilosc_pamieci=ilosc_pamieci,
+                                             rodzaj_pamieci=rodzaj_pamieci,
+                                             szyna=szyna, id_towaru=id_towaru)
+            karta_graficzna.save()
+
+            return redirect(goods)
+
+def goods_details(request, id_towaru):
+    towar = get_object_or_404(Towary, pk=id_towaru)
+    return render(request, 'shop/goods_details.html', {'towar':towar, 'id_towaru':id_towaru})
+
+def delete_goods(request, id_pracownika):
+    Pracownicy.objects.filter(id_pracownika__iexact=id_pracownika).delete()
+    return redirect(workers)
+
+def update_goods(request, id_pracownika):
+    if request.method == 'POST':
+        form = AddWorker(request.POST)
+        print(form)
+        if form.is_valid():
+            imie = form.cleaned_data['imie']
+            nazwisko = form.cleaned_data['nazwisko']
+            pesel = form.cleaned_data['pesel']
+            miejscowosc = form.cleaned_data['miejscowosc']
+            ulica = form.cleaned_data['ulica']
+            nr_budynku = form.cleaned_data['nr_budynku']
+            nr_lokalu = form.cleaned_data['nr_lokalu']
+            data_urodzenia = form.cleaned_data['data_urodzenia']
+            adres_e_mail = form.cleaned_data['adres_e_mail']
+            nr_telefonu = form.cleaned_data['nr_telefonu']
+            stanowisko = form.cleaned_data['stanowisko']
+            Pracownicy.objects.filter(id_pracownika__iexact=id_pracownika).update(imie=imie, nazwisko=nazwisko, pesel=pesel,
+                                                                                  data_urodzenia=data_urodzenia, miejscowosc=miejscowosc,
+                                                                                  ulica=ulica, nr_budynku=nr_budynku, nr_lokalu=nr_lokalu,
+                                                                                  adres_e_mail=adres_e_mail, nr_telefonu=nr_telefonu, stanowisko=stanowisko)
+
+            return redirect(workers)

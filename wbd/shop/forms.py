@@ -19,3 +19,39 @@ class AddWorker(forms.Form):
     stanowisko = forms.CharField(max_length=30)
     adres_e_mail = forms.CharField(max_length=50)
     nr_telefonu = forms.CharField(max_length=15)
+
+class ChooseType(forms.Form):
+    typ = forms.CharField(max_length=20)
+
+class AddProcesor(forms.Form):
+    produent = forms.CharField(max_length=60)
+    kod_producenta = forms.CharField(max_length=20)
+    model = forms.CharField(max_length=20, required=False)
+    cena = forms.DecimalField(max_digits=10, decimal_places=2)
+    liczba_rdzeni = forms.IntegerField()
+    taktowanie = forms.FloatField()
+
+class AddPamiec(forms.Form):
+    produent = forms.CharField(max_length=60)
+    kod_producenta = forms.CharField(max_length=20)
+    model = forms.CharField(max_length=20, required=False)
+    cena = forms.DecimalField(max_digits=10, decimal_places=2)
+    typ = forms.CharField(max_length=4)
+    pojemnosc = forms.IntegerField()
+
+class AddPlytaGlowna(forms.Form):
+    produent = forms.CharField(max_length=60)
+    kod_producenta = forms.CharField(max_length=20)
+    model = forms.CharField(max_length=20, required=False)
+    cena = forms.DecimalField(max_digits=10, decimal_places=2)
+    chipset = forms.CharField(max_length=15)
+    standard_pamieci = forms.CharField(max_length=4)
+
+class AddKartaGraficzna(forms.Form):
+    produent = forms.CharField(max_length=60)
+    kod_producenta = forms.CharField(max_length=20)
+    model = forms.CharField(max_length=20, required=False)
+    cena = forms.DecimalField(max_digits=10, decimal_places=2)
+    ilosc_pamieci = forms.IntegerField()
+    rodzaj_pamieci = forms.CharField(max_length=5)
+    szyna = forms.IntegerField()

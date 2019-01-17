@@ -3,7 +3,9 @@
 <link rel="stylesheet" type="text/css" href="{% static 'shop/style.css' %}">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
-
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
 
 <div class="header">
     <h1>Hurtownia części elektronicznych</h1>
@@ -39,48 +41,33 @@
 </nav>
 
 <div class="container-fluid">
-    <div class="row">
-            <div class="col-lg-10 order-1 order-lg-2">
-                <form class="form-inline mr-auto" action="/filter_goods/" method="get">
-                    <input class="form-control mr-sm-2" type="text" placeholder="Szukaj" aria-label="Search" name="search">
-                    <button class="btn btn-primary form-control mr-sm-2" type="submit">Szukaj</button>
-                    <a href="/goods/"><button type="button" class="btn btn-secondary form-control mr-sm-2">Resetuj filtr</button></a>
-                </form>
-            </div>
-        <div class="col-lg-2 order-1 order-lg-2">
-            <a href="/add_goods/"><button type="button" class="btn btn-primary">Dodaj towar</button></a>
-        </div>
+    <form action="/post_procesor/" method="post">
+     {% csrf_token %}
+     <div class="form-group">
+      <label for="produent">Producent<span style="color:red">*</span></label>
+      <input id="produent" class="form-control" type="text" name="produent">
     </div>
-    <div class="row">
-        <div class="col-lg-12 order-1 order-lg-2">
-            <table class="table">
-                <thead>
-                <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Producent</th>
-                  <th scope="col">Model</th>
-                  <th scope="col">Kod producenta</th>
-                  <th scope="col">Cena</th>
-                  <th scope="col"></th>
-                </tr>
-              </thead>
-                <tbody>
-                {% for towar in towary %}
-                <tr>
-                    <th scope="row">{{ forloop.counter }}</th>
-                    <td>{{towar.produent}}</td>
-                    <td>{{towar.model}}</td>
-                    <td>{{towar.kod_producenta}}</td>
-                    <td>{{towar.cena}}</td>
-                    <td><a href="{% url 'goods_details' towar.id_towaru %}"><button type="button" class="btn btn-info">Szczegóły</button></a></td>
-                </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
+    <div class="form-group">
+      <label for="kod_producenta">Kod producenta<span style="color:red">*</span></label>
+      <input id="kod_producenta" class="form-control" type="text" name="kod_producenta">
     </div>
-</div>
-
-<div class="footer">
-
+    <div class="form-group">
+      <label for="model">Model</label>
+      <input id="model" class="form-control" type="text" name="model">
+    </div>
+    <div class="form-group">
+      <label for="cena">Cena<span style="color:red">*</span></label>
+      <input id="cena" class="form-control" type="number" step="0.01" name="cena">
+    </div>
+    <div class="form-group">
+      <label for="liczba_rdzeni">Liczba rdzeni<span style="color:red">*</span></label>
+      <input id="liczba_rdzeni" class="form-control" type="number" step="1" name="liczba_rdzeni">
+    </div>
+    <div class="form-group">
+      <label for="taktowanie">Taktowanie<span style="color:red">*</span></label>
+      <input id="taktowanie" class="form-control" type="number" step="0.01" name="taktowanie">
+    </div>
+    <a href="/goods/"><button type="button" class="btn btn-secondary">Anuluj</button></a>
+    <input type="submit" class="btn btn-primary" value="Dodaj">
+    </form>
 </div>

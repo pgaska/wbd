@@ -1,0 +1,77 @@
+<link rel="stylesheet" href="../../static/shop/style.css">{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'shop/style.css' %}">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+
+<div class="header">
+    <h1>Hurtownia części elektronicznych</h1>
+</div>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <!--<a class="navbar-brand" href="#">Navbar</a>-->
+  <!--<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">-->
+    <!--<span class="navbar-toggler-icon"></span>-->
+  <!--</button>-->
+  <div class="collapse navbar-collapse" id="navvbarNav">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" href="/hurtownia/">Dane hurtowni <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/magazines/">Magazyny</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/workers/">Pracownicy</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="/goods/">Towary</a>
+      </li>
+      <li class="nav-item disabled">
+          <p class="nav-item nav-link disabled">Zalogowany jako: {{request.user.username}}</p>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="/logout/">Wyloguj</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<div class="container-fluid">
+    <form action="/post_karta_graficzna/" method="post">
+     {% csrf_token %}
+     <div class="form-group">
+      <label for="produent">Producent<span style="color:red">*</span></label>
+      <input id="produent" class="form-control" type="text" name="produent">
+    </div>
+    <div class="form-group">
+      <label for="kod_producenta">Kod producenta<span style="color:red">*</span></label>
+      <input id="kod_producenta" class="form-control" type="text" name="kod_producenta">
+    </div>
+    <div class="form-group">
+      <label for="model">Model</label>
+      <input id="model" class="form-control" type="text" name="model">
+    </div>
+    <div class="form-group">
+      <label for="cena">Cena<span style="color:red">*</span></label>
+      <input id="cena" class="form-control" type="number" step="0.01" name="cena">
+    </div>
+    <div class="form-group">
+      <label for="ilosc_pamieci">Ilość pamięci<span style="color:red">*</span></label>
+      <input id="ilosc_pamieci" class="form-control" type="number" step="1" name="ilosc_pamieci">
+    </div>
+    <div class="form-group">
+      <label for="rodzaj_pamieci">Rodzaj pamięci<span style="color:red">*</span></label>
+      <input id="rodzaj_pamieci" class="form-control" type="text" name="rodzaj_pamieci">
+    </div>
+    <div class="form-group">
+      <label for="szyna">Szyna<span style="color:red">*</span></label>
+      <input id="szyna" class="form-control" type="number" step="1" name="szyna">
+    </div>
+    <a href="/goods/"><button type="button" class="btn btn-secondary">Anuluj</button></a>
+    <input type="submit" class="btn btn-primary" value="Dodaj">
+    </form>
+</div>

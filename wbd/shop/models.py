@@ -40,6 +40,18 @@ class Hurtownie(models.Model):
         managed = False
         db_table = 'hurtownie'
 
+class KartaGraficzna(models.Model):
+    id_karty_graficznej = models.BigIntegerField(primary_key=True)
+    ilosc_pamieci = models.BigIntegerField()
+    rodzaj_pamieci = models.CharField(max_length=5)
+    szyna = models.BigIntegerField()
+    id_towaru = models.BigIntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'karta_graficzna'
+        unique_together = (('id_karty_graficznej', 'id_towaru'),)
+
 class Magazyny(models.Model):
     id_magazynu = models.BigIntegerField(primary_key=True)
     miejscowosc = models.CharField(max_length=30)
