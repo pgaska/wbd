@@ -335,31 +335,94 @@ def post_karta_graficzna(request):
 
 def goods_details(request, id_towaru):
     towar = get_object_or_404(Towary, pk=id_towaru)
-    return render(request, 'shop/goods_details.html', {'towar':towar, 'id_towaru':id_towaru})
+    karta_graficzna = KartaGraficzna.objects.filter(id_towaru__iexact=id_towaru).first()
+    pamiec = Pamiec.objects.filter(id_towaru__iexact=id_towaru).first()
+    procesor = Procesor.objects.filter(id_towaru__iexact=id_towaru).first()
+    plyta_glowna = PlytaGlowna.objects.filter(id_towaru__iexact=id_towaru).first()
+    return render(request, 'shop/goods_details.html', {'towar':towar, 'id_towaru':id_towaru, 'karta_graficzna':karta_graficzna, 'pamiec':pamiec, 'procesor':procesor, 'plyta_glowna':plyta_glowna})
 
-def delete_goods(request, id_pracownika):
-    Pracownicy.objects.filter(id_pracownika__iexact=id_pracownika).delete()
-    return redirect(workers)
+def delete_goods(request, id_towaru):
+    karta_graficzna = KartaGraficzna.objects.filter(id_towaru__iexact=id_towaru).first()
+    pamiec = Pamiec.objects.filter(id_towaru__iexact=id_towaru).first()
+    procesor = Procesor.objects.filter(id_towaru__iexact=id_towaru).first()
+    plyta_glowna = PlytaGlowna.objects.filter(id_towaru__iexact=id_towaru).first()
+    if karta_graficzna:
+        karta_graficzna.delete()
+    elif pamiec:
+        pamiec.delete()
+    elif procesor:
+        procesor.delete()
+    elif plyta_glowna:
+        plyta_glowna.delete()
+    Towary.objects.filter(id_towaru__iexact=id_towaru).delete()
+    return redirect(goods)
 
-def update_goods(request, id_pracownika):
+def update_goods(request, id_towaru):
     if request.method == 'POST':
-        form = AddWorker(request.POST)
-        print(form)
-        if form.is_valid():
-            imie = form.cleaned_data['imie']
-            nazwisko = form.cleaned_data['nazwisko']
-            pesel = form.cleaned_data['pesel']
-            miejscowosc = form.cleaned_data['miejscowosc']
-            ulica = form.cleaned_data['ulica']
-            nr_budynku = form.cleaned_data['nr_budynku']
-            nr_lokalu = form.cleaned_data['nr_lokalu']
-            data_urodzenia = form.cleaned_data['data_urodzenia']
-            adres_e_mail = form.cleaned_data['adres_e_mail']
-            nr_telefonu = form.cleaned_data['nr_telefonu']
-            stanowisko = form.cleaned_data['stanowisko']
-            Pracownicy.objects.filter(id_pracownika__iexact=id_pracownika).update(imie=imie, nazwisko=nazwisko, pesel=pesel,
-                                                                                  data_urodzenia=data_urodzenia, miejscowosc=miejscowosc,
-                                                                                  ulica=ulica, nr_budynku=nr_budynku, nr_lokalu=nr_lokalu,
-                                                                                  adres_e_mail=adres_e_mail, nr_telefonu=nr_telefonu, stanowisko=stanowisko)
+        procesor = Procesor.objects.filter(id_towaru__iexact=id_towaru).first()
+        if procesor:
+            form = AddProcesor(request.POST)
+            if form.is_valid():
+                produent = form.cleaned_data['produent']
+                kod_producenta = form.cleaned_data['kod_producenta']
+                model = form.cleaned_data['model']
+                cena = form.cleaned_data['cena']
+                liczba_rdzeni = form.cleaned_data['liczba_rdzeni']
+                taktowanie = form.cleaned_data['taktowanie']
+                Towary.objects.filter(id_towaru__iexact=id_towaru).update(produent=produent, kod_producenta=kod_producenta,
+                                                                          model=model, cena=cena)
+                Procesor.objects.filter(id_towaru__iexact=id_towaru).update(liczba_rdzeni=liczba_rdzeni, taktowanie=taktowanie)
 
-            return redirect(workers)
+                return redirect (goods)
+
+        pamiec = Pamiec.objects.filter(id_towaru__iexact=id_towaru).first()
+        if pamiec:
+            form = AddPamiec(request.POST)
+            if form.is_valid():
+                produent = form.cleaned_data['produent']
+                kod_producenta = form.cleaned_data['kod_producenta']
+                model = form.cleaned_data['model']
+                cena = form.cleaned_data['cena']
+                typ = form.cleaned_data['typ']
+                pojemnosc = form.cleaned_data['pojemnosc']
+                Towary.objects.filter(id_towaru__iexact=id_towaru).update(produent=produent,
+                                                                          kod_producenta=kod_producenta,
+                                                                          model=model, cena=cena)
+                Pamiec.objects.filter(id_towaru__iexact=id_towaru).update(typ=typ, pojemnosc=pojemnosc)
+
+                return redirect(goods)
+
+        plyta_glowna = PlytaGlowna.objects.filter(id_towaru__iexact=id_towaru).first()
+        if plyta_glowna:
+            form = AddPlytaGlowna(request.POST)
+            if form.is_valid():
+                produent = form.cleaned_data['produent']
+                kod_producenta = form.cleaned_data['kod_producenta']
+                model = form.cleaned_data['model']
+                cena = form.cleaned_data['cena']
+                chipset = form.cleaned_data['chipset']
+                standard_pamieci = form.cleaned_data['standard_pamieci']
+                Towary.objects.filter(id_towaru__iexact=id_towaru).update(produent=produent,
+                                                                          kod_producenta=kod_producenta,
+                                                                          model=model, cena=cena)
+                PlytaGlowna.objects.filter(id_towaru__iexact=id_towaru).update(chipset=chipset, standard_pamieci=standard_pamieci)
+
+                return redirect(goods)
+
+        karta_graficzna = KartaGraficzna.objects.filter(id_towaru__iexact=id_towaru).first()
+        if karta_graficzna:
+            form = AddKartaGraficzna(request.POST)
+            if form.is_valid():
+                produent = form.cleaned_data['produent']
+                kod_producenta = form.cleaned_data['kod_producenta']
+                model = form.cleaned_data['model']
+                cena = form.cleaned_data['cena']
+                ilosc_pamieci = form.cleaned_data['ilosc_pamieci']
+                rodzaj_pamieci = form.cleaned_data['rodzaj_pamieci']
+                szyna = form.cleaned_data['szyna']
+                Towary.objects.filter(id_towaru__iexact=id_towaru).update(produent=produent,
+                                                                          kod_producenta=kod_producenta,
+                                                                          model=model, cena=cena)
+                KartaGraficzna.objects.filter(id_towaru__iexact=id_towaru).update(ilosc_pamieci=ilosc_pamieci, rodzaj_pamieci=rodzaj_pamieci, szyna=szyna)
+
+                return redirect(goods)

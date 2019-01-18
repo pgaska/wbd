@@ -41,7 +41,7 @@
 </nav>
 
 <div class="container-fluid">
-    <form action="/update_goods/" method="post">
+    <form action="{% url 'update_goods' towar.id_towaru %}" method="post">
      {% csrf_token %}
      <div class="form-group">
       <label for="produent">Producent<span style="color:red">*</span></label>
@@ -59,22 +59,52 @@
       <label for="cena">Cena<span style="color:red">*</span></label>
       <input id="cena" class="form-control" type="number" step="0.01" name="cena" value="{{towar.cena}}">
     </div>
-    {% if KartaGraficzna.objects.filter(id_towaru=towar.id_towaru) %}
+    {% if karta_graficzna %}
     <div class="form-group">
       <label for="ilosc_pamieci">Ilość pamięci<span style="color:red">*</span></label>
-      <input id="ilosc_pamieci" class="form-control" type="number" step="1" name="ilosc_pamieci">
+      <input id="ilosc_pamieci" class="form-control" type="number" step="1" name="ilosc_pamieci" value="{{karta_graficzna.ilosc_pamieci}}">
     </div>
     <div class="form-group">
       <label for="rodzaj_pamieci">Rodzaj pamięci<span style="color:red">*</span></label>
-      <input id="rodzaj_pamieci" class="form-control" type="text" name="rodzaj_pamieci">
+      <input id="rodzaj_pamieci" class="form-control" type="text" name="rodzaj_pamieci" value="{{karta_graficzna.rodzaj_pamieci}}">
     </div>
     <div class="form-group">
       <label for="szyna">Szyna<span style="color:red">*</span></label>
-      <input id="szyna" class="form-control" type="number" step="1" name="szyna">
+      <input id="szyna" class="form-control" type="number" step="1" name="szyna" value="{{karta_graficzna.szyna}}">
+    </div>
+    {% endif %}
+    {% if pamiec %}
+    <div class="form-group">
+      <label for="typ">Typ<span style="color:red">*</span></label>
+      <input id="typ" class="form-control" type="text" name="typ" value="{{pamiec.typ}}">
+    </div>
+    <div class="form-group">
+      <label for="pojemnosc">Pojemność<span style="color:red">*</span></label>
+      <input id="pojemnosc" class="form-control" type="number" step="1" name="pojemnosc" value="{{pamiec.pojemnosc}}">
+    </div>
+    {% endif %}
+    {% if plyta_glowna %}
+    <div class="form-group">
+      <label for="chipset">Chipset<span style="color:red">*</span></label>
+      <input id="chipset" class="form-control" type="text" name="chipset" value="{{plyta_glowna.chipset}}">
+    </div>
+    <div class="form-group">
+      <label for="standard_pamieci">Standard pamięci<span style="color:red">*</span></label>
+      <input id="standard_pamieci" class="form-control" type="text"name="standard_pamieci" value="{{plyta_glowna.standard_pamieci}}">
+    </div>
+    {% endif %}
+    {% if procesor %}
+    <div class="form-group">
+      <label for="liczba_rdzeni">Liczba rdzeni<span style="color:red">*</span></label>
+      <input id="liczba_rdzeni" class="form-control" type="number" step="1" name="liczba_rdzeni" value="{{procesor.liczba_rdzeni}}">
+    </div>
+    <div class="form-group">
+      <label for="taktowanie">Taktowanie<span style="color:red">*</span></label>
+      <input id="taktowanie" class="form-control" type="number" step="0.01" name="taktowanie" value="{{procesor.taktowanie}}">
     </div>
     {% endif %}
     <a href="/goods/"><button type="button" class="btn btn-secondary">Wróć</button></a>
-    <a href="/delete_goods/"><button type="button" class="btn btn-danger">Usuń</button></a>
+    <a href="{% url 'delete_goods' towar.id_towaru %}"><button type="button" class="btn btn-danger">Usuń</button></a>
     <input type="submit" class="btn btn-primary" value="Zmień">
     </form>
 </div>
