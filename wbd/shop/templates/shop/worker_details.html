@@ -33,15 +33,19 @@
       <li class="nav-item">
         <a class="nav-link" href="/hurtownia/">Dane hurtowni <span class="sr-only">(current)</span></a>
       </li>
+      {% if user.username == "manager" %}
       <li class="nav-item">
         <a class="nav-link" href="/magazines/">Magazyny</a>
       </li>
+      {% endif %}
       <li class="nav-item active">
         <a class="nav-link" href="/workers/">Pracownicy</a>
       </li>
+      {% if user.username == "manager" %}
       <li class="nav-item">
         <a class="nav-link" href="/goods/">Towary</a>
       </li>
+      {% endif %}
       <li class="nav-item disabled">
           <p class="nav-item nav-link disabled">Zalogowany jako: {{request.user.username}}</p>
       </li>
@@ -52,7 +56,16 @@
   </div>
 </nav>
 
-<div class="container-fluid">
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link active" href="#">Informacje</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'salaries' pracownik.id_pracownika %}">Wynagrodzenia</a>
+  </li>
+</ul>
+
+<div class="container-fluid" style="margin-bottom:3rem;">
   <form action="{% url 'update_worker' pracownik.id_pracownika %}" method="post">
     {% csrf_token %}
     <div class="form-group">
@@ -86,6 +99,10 @@
     <div class="form-group">
       <label for="nr_lokalu">Numer lokalu</label>
       <input id="nr_lokalu" class="form-control" type="text" name="nr_lokalu" value="{{pracownik.nr_lokalu}}">
+    </div>
+    <div class="form-group">
+      <label for="kod_pocztowy">Kod pocztowy<span style="color:red">*</span></label>
+      <input id="kod_pocztowy" class="form-control" type="text" name="kod_pocztowy" value="{{poczta.kod_pocztowy}}">
     </div>
     <div class="form-group">
       <label for="pesel">PESEL</label>

@@ -6,6 +6,7 @@ class AddMagazine(forms.Form):
     nr_budynku = forms.CharField(max_length=4)
     nr_lokalu = forms.CharField(max_length=4, required=False)
     powierzchnia = forms.FloatField()
+    kod_pocztowy = forms.CharField(max_length=6, required=False)
 
 class AddWorker(forms.Form):
     imie = forms.CharField(max_length=20)
@@ -14,6 +15,7 @@ class AddWorker(forms.Form):
     ulica = forms.CharField(max_length=40, required=False)
     nr_budynku = forms.CharField(max_length=4)
     nr_lokalu = forms.CharField(max_length=4, required=False)
+    kod_pocztowy = forms.CharField(max_length=6, required=False)
     pesel = forms.CharField(max_length=11, required=False)
     data_urodzenia = forms.DateField()
     stanowisko = forms.CharField(max_length=30)
@@ -55,3 +57,7 @@ class AddKartaGraficzna(forms.Form):
     ilosc_pamieci = forms.IntegerField()
     rodzaj_pamieci = forms.CharField(max_length=5)
     szyna = forms.IntegerField()
+
+class AddSalary(forms.Form):
+    kwota = forms.FloatField()
+    premia = forms.FloatField()

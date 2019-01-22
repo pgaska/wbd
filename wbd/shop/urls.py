@@ -14,6 +14,8 @@ urlpatterns = [
     path('magazines/magazine_details/<int:id_magazynu>/', views.magazine_details, name='magazine_details'),
     path('magazines/magazine_details/<int:id_magazynu>/delete_magazine/', views.delete_magazine, name="delete_magazine"),
     path('magazines/magazine_details/<int:id_magazynu>/update_magazine/', views.update_magazine, name="update_magazine"),
+    path('magazines/magazine_details/<int:id_magazynu>/magazine_goods/', views.magazine_goods, name="magazine_goods"),
+    path('magazines/magazine_details/<int:id_magazynu>/filter_magazine_goods/', views.filter_magazine_goods, name="filter_magazine_goods"),
     path('workers/', views.workers, name='workers'),
     path('filter_workers/', views.filter_workers, name='filter_workers'),
     path('add_worker/', views.add_worker, name='add_worker'),
@@ -36,4 +38,6 @@ urlpatterns = [
     path('goods/goods_details/<int:id_towaru>/', views.goods_details, name='goods_details'),
     path('goods/goods_details/<int:id_towaru>/delete_goods/', views.delete_goods, name="delete_goods"),
     path('goods/goods_details/<int:id_towaru>/update_goods/', views.update_goods, name="update_goods"),
+    path('workers/worker_details/<int:id_pracownika>/salaries', views.salaries, name='salaries'),
+    path('workers/worker_details/<int:id_pracownika>/post_salary', views.post_salary, name='post_salary'),
 ]

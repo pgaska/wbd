@@ -3,11 +3,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models import Max
+from django.db import transaction
 from datetime import date
 from django.core.exceptions import ValidationError
 
-from .models import Hurtownie, Poczta, Magazyny, Pracownicy, Procesor, PlytaGlowna, Pamiec, KartaGraficzna, Towary
-from .forms import AddMagazine, AddWorker, ChooseType, AddKartaGraficzna, AddPamiec, AddPlytaGlowna, AddProcesor
+from .models import Hurtownie, Poczta, Magazyny, Pracownicy, Procesor, PlytaGlowna, Pamiec, KartaGraficzna, Towary, Wynagrodzenia
+from .forms import AddMagazine, AddWorker, ChooseType, AddKartaGraficzna, AddPamiec, AddPlytaGlowna, AddProcesor, AddSalary
 
 # Create your views here.
 def index(request):
@@ -40,7 +41,8 @@ def logout_view(request):
     logout(request)
     return redirect(index)
 
-def magazines(request, magazyny=Magazyny.objects.all()):
+def magazines(request):
+    magazyny=Magazyny.objects.all()
     if not request.user.is_authenticated:
         return redirect(index)
     return render(request, 'shop/magazines.html', {'magazyny':magazyny})
@@ -68,10 +70,14 @@ def post_magazine(request):
             nr_lokalu = form.cleaned_data['nr_lokalu']
             powierzchnia = form.cleaned_data['powierzchnia']
             id_hurtowni = Hurtownie.objects.all().first()
-            id_poczty = Poczta.objects.all().first()
+            kod_pocztowy = form.cleaned_data['kod_pocztowy']
+            id_poczty = Poczta.objects.aggregate(Max('id_poczty')).get("id_poczty__max") + 1
+            poczta = Poczta(id_poczty=id_poczty, kod_pocztowy=kod_pocztowy, miasto=miejscowosc)
+            poczta.save()
             magazyn = Magazyny(id_magazynu=id_magazynu, miejscowosc=miejscowosc, ulica=ulica, nr_budynku=nr_budynku, nr_lokalu=nr_lokalu,
-                               powierzchnia=powierzchnia, id_hurtowni=id_hurtowni, id_poczty=id_poczty)
+                               powierzchnia=powierzchnia, id_hurtowni=id_hurtowni, id_poczty=poczta)
             magazyn.save()
+            transaction.commit('default')
 
             return redirect(magazines)
 
@@ -92,15 +98,56 @@ def update_magazine(request, id_magazynu):
             nr_budynku = form.cleaned_data['nr_budynku']
             nr_lokalu = form.cleaned_data['nr_lokalu']
             powierzchnia = form.cleaned_data['powierzchnia']
+            kod_pocztowy = form.cleaned_data['kod_pocztowy']
+            id_poczty = Poczta.objects.aggregate(Max('id_poczty')).get("id_poczty__max") + 1
+            poczta = Poczta(id_poczty=id_poczty, kod_pocztowy=kod_pocztowy, miasto=miejscowosc)
+            poczta.save()
             Magazyny.objects.filter(id_magazynu__iexact=id_magazynu).update(miejscowosc=miejscowosc, ulica=ulica, nr_budynku=nr_budynku, nr_lokalu=nr_lokalu,
-                                                                            powierzchnia=powierzchnia)
+                                                                            powierzchnia=powierzchnia, id_poczty=poczta)
+            transaction.commit('default')
 
             return redirect(magazines)
 
     else:
         return redirect(add_magazine)
 
-def workers(request, pracownicy=Pracownicy.objects.all()):
+def magazine_goods(request, id_magazynu):
+    magazyn = get_object_or_404(Magazyny, pk=id_magazynu)
+    procesory = Procesor.objects.all()
+    pamiec = Pamiec.objects.all()
+    karty_graficzne = KartaGraficzna.objects.all()
+    plyty_glowne = PlytaGlowna.objects.all()
+    towary = []
+    for procesor in procesory:
+        towar = get_object_or_404(Towary, pk=procesor.id_towaru, id_magazynu=magazyn)
+        towary.append(towar)
+
+    for p in pamiec:
+        towar = get_object_or_404(Towary, pk=p.id_towaru, id_magazynu=magazyn)
+        towary.append(towar)
+
+    for karta_graficzna in karty_graficzne:
+        towar = get_object_or_404(Towary, pk=karta_graficzna.id_towaru, id_magazynu=magazyn)
+        towary.append(towar)
+
+    for plyta_glowna in plyty_glowne:
+        towar = get_object_or_404(Towary, pk=plyta_glowna.id_towaru, id_magazynu=magazyn)
+        towary.append(towar)
+    return render(request, 'shop/magazine_goods.html', {'magazyn':magazyn, 'towary':towary})
+
+def filter_magazine_goods(request, id_magazynu):
+    magazyn = get_object_or_404(Magazyny, pk=id_magazynu)
+    query = request.GET.get('search')
+    if query:
+        result = Towary.objects.filter(produent__icontains=query, id_magazynu=magazyn) | Towary.objects.filter(
+                  kod_producenta__iexact=query,id_magazynu=magazyn) | \
+                  Towary.objects.filter(model__icontains=query,id_magazynu=magazyn) | Towary.objects.filter(cena__iexact=query,id_magazynu=magazyn)
+        transaction.commit('default')
+
+        return render(request, 'shop/magazine_goods.html', {'magazyn':magazyn, 'towary': result})
+
+def workers(request):
+    pracownicy = Pracownicy.objects.all()
     if not request.user.is_authenticated:
         return redirect(index)
     return render(request, 'shop/workers.html', {'pracownicy':pracownicy})
@@ -123,7 +170,10 @@ def post_worker(request):
     if request.method == 'POST':
         form = AddWorker(request.POST)
         if form.is_valid():
-            id_pracownika = Pracownicy.objects.aggregate(Max('id_pracownika')).get("id_pracownika__max") + 1
+            if not Pracownicy.objects.all():
+                id_pracownika = 1
+            else:
+                id_pracownika = Pracownicy.objects.aggregate(Max('id_pracownika')).get("id_pracownika__max") + 1
             imie = form.cleaned_data['imie']
             nazwisko = form.cleaned_data['nazwisko']
             pesel = form.cleaned_data['pesel']
@@ -135,12 +185,17 @@ def post_worker(request):
             adres_e_mail= form.cleaned_data['adres_e_mail']
             nr_telefonu = form.cleaned_data['nr_telefonu']
             stanowisko = form.cleaned_data['stanowisko']
+            kod_pocztowy = form.cleaned_data['kod_pocztowy']
             data_zatrudnienia = date.today()
+            id_poczty = Poczta.objects.aggregate(Max('id_poczty')).get("id_poczty__max") + 1
+            poczta = Poczta(id_poczty=id_poczty, kod_pocztowy=kod_pocztowy, miasto=miejscowosc)
+            poczta.save()
             pracownik = Pracownicy(id_pracownika=id_pracownika, miejscowosc=miejscowosc, ulica=ulica, nr_budynku=nr_budynku, nr_lokalu=nr_lokalu,
                                    imie=imie, nazwisko=nazwisko, pesel=pesel, data_urodzenia=data_urodzenia, adres_e_mail=adres_e_mail,
                                    nr_telefonu=nr_telefonu, stanowisko=stanowisko, data_zatrudniena=data_zatrudnienia,
-                                   id_hurtowni=1, id_poczty=1)
+                                   id_hurtowni=1, id_poczty=id_poczty)
             pracownik.save()
+            transaction.commit('default')
 
             return redirect(workers)
 
@@ -149,8 +204,9 @@ def post_worker(request):
 
 
 def worker_details(request, id_pracownika):
-    pracownik = Pracownicy.objects.get(id_pracownika__iexact=id_pracownika)
-    return render(request, 'shop/worker_details.html', {'pracownik':pracownik, 'id_pracownika':id_pracownika})
+    pracownik = get_object_or_404(Pracownicy, pk=id_pracownika)
+    poczta = get_object_or_404(Poczta, id_poczty__iexact=pracownik.id_poczty)
+    return render(request, 'shop/worker_details.html', {'pracownik':pracownik, 'id_pracownika':id_pracownika, 'poczta':poczta})
 
 def delete_worker(request, id_pracownika):
     Pracownicy.objects.filter(id_pracownika__iexact=id_pracownika).delete()
@@ -171,12 +227,42 @@ def update_worker(request, id_pracownika):
             adres_e_mail = form.cleaned_data['adres_e_mail']
             nr_telefonu = form.cleaned_data['nr_telefonu']
             stanowisko = form.cleaned_data['stanowisko']
+            kod_pocztowy = form.cleaned_data['kod_pocztowy']
+            id_poczty = Poczta.objects.aggregate(Max('id_poczty')).get("id_poczty__max") + 1
+            poczta = Poczta(id_poczty=id_poczty, kod_pocztowy=kod_pocztowy, miasto=miejscowosc)
+            poczta.save()
             Pracownicy.objects.filter(id_pracownika__iexact=id_pracownika).update(imie=imie, nazwisko=nazwisko, pesel=pesel,
                                                                                   data_urodzenia=data_urodzenia, miejscowosc=miejscowosc,
                                                                                   ulica=ulica, nr_budynku=nr_budynku, nr_lokalu=nr_lokalu,
-                                                                                  adres_e_mail=adres_e_mail, nr_telefonu=nr_telefonu, stanowisko=stanowisko)
+                                                                                  adres_e_mail=adres_e_mail, nr_telefonu=nr_telefonu, stanowisko=stanowisko,
+                                                                                  id_poczty=id_poczty)
+            transaction.commit('default')
 
             return redirect(workers)
+
+def salaries(request, id_pracownika):
+    pracownik = get_object_or_404(Pracownicy, pk=id_pracownika)
+    wynagrodzenia = Wynagrodzenia.objects.filter(id_pracownika=pracownik.id_pracownika)
+    print(wynagrodzenia)
+    return render(request, 'shop/salaries.html', {'pracownik':pracownik, 'wynagrodzenia':wynagrodzenia})
+
+def post_salary(request, id_pracownika):
+    if request.method == "POST":
+        form = AddSalary(request.POST)
+        if form.is_valid():
+            kwota = form.cleaned_data['kwota']
+            premia = form.cleaned_data['premia']
+            if not Wynagrodzenia.objects.all():
+                id_wynagrodzenia = 1
+            else:
+                id_wynagrodzenia = Wynagrodzenia.objects.aggregate(Max('id_wynagrodzenia')).get("id_wynagrodzenia__max") + 1
+            wynagrodzenie = Wynagrodzenia(id_wynagrodzenia=id_wynagrodzenia, kwota=kwota,
+                                          premia=premia, id_pracownika=id_pracownika,
+                                          data=date.today())
+            wynagrodzenie.save()
+            transaction.commit('default')
+
+            return redirect(salaries, id_pracownika=id_pracownika)
 
 def goods(request):
     procesory = Procesor.objects.all()
@@ -206,6 +292,7 @@ def filter_goods(request):
     if query:
         result = Towary.objects.filter(produent__icontains=query) | Towary.objects.filter(kod_producenta__iexact=query) |\
                  Towary.objects.filter(model__icontains=query) | Towary.objects.filter(cena__iexact=query)
+        transaction.commit('default')
 
         return render(request, 'shop/goods.html', {'towary':result})
 
@@ -243,7 +330,10 @@ def post_procesor(request):
     if request.method == 'POST':
         form = AddProcesor(request.POST)
         if form.is_valid():
-            id_towaru = Towary.objects.aggregate(Max('id_towaru')).get('id_towaru__max') + 1
+            if not Towary.objects.all():
+                id_towaru = 1
+            else:
+                id_towaru = Towary.objects.aggregate(Max('id_towaru')).get('id_towaru__max') + 1
             producent = form.cleaned_data['produent']
             kod_producenta = form.cleaned_data['kod_producenta']
             model = form.cleaned_data['model']
@@ -252,12 +342,17 @@ def post_procesor(request):
             towar = Towary(id_towaru=id_towaru, produent=producent, kod_producenta=kod_producenta,
                             model=model, cena=cena, id_magazynu=id_magazynu)
             towar.save()
+            transaction.commit('default')
 
-            id_procesora = Procesor.objects.aggregate(Max('id_procesora')).get('id_procesora__max') + 1
+            if not Procesor.objects.all():
+                id_procesora = 1
+            else:
+                id_procesora = Procesor.objects.aggregate(Max('id_procesora')).get('id_procesora__max') + 1
             liczba_rdzeni = form.cleaned_data['liczba_rdzeni']
             taktowanie = form.cleaned_data['taktowanie']
             procesor = Procesor(id_procesora=id_procesora, liczba_rdzeni=liczba_rdzeni, taktowanie=taktowanie, id_towaru=id_towaru)
             procesor.save()
+            transaction.commit('default')
 
             return redirect(goods)
 
@@ -265,7 +360,10 @@ def post_pamiec(request):
     if request.method == 'POST':
         form = AddPamiec(request.POST)
         if form.is_valid():
-            id_towaru = Towary.objects.aggregate(Max('id_towaru')).get('id_towaru__max') + 1
+            if not Towary.objects.all():
+                id_towaru = 1
+            else:
+                id_towaru = Towary.objects.aggregate(Max('id_towaru')).get('id_towaru__max') + 1
             producent = form.cleaned_data['produent']
             kod_producenta = form.cleaned_data['kod_producenta']
             model = form.cleaned_data['model']
@@ -275,7 +373,10 @@ def post_pamiec(request):
                            model=model, cena=cena,  id_magazynu=id_magazynu)
             towar.save()
 
-            id_pamieci = Pamiec.objects.aggregate(Max('id_pamieci')).get('id_pamieci__max') + 1
+            if not Pamiec.objects.all():
+                id_pamieci = 1
+            else:
+                id_pamieci = Pamiec.objects.aggregate(Max('id_pamieci')).get('id_pamieci__max') + 1
             typ_ = form.cleaned_data['typ']
             pojemnosc = form.cleaned_data['pojemnosc']
             pamiec = Pamiec(id_pamieci=id_pamieci, typ=typ_, pojemnosc=pojemnosc, id_towaru=id_towaru)
@@ -287,7 +388,10 @@ def post_plyta_glowna(request):
     if request.method == 'POST':
         form = AddPlytaGlowna(request.POST)
         if form.is_valid():
-            id_towaru = Towary.objects.aggregate(Max('id_towaru')).get('id_towaru__max') + 1
+            if not Towary.objects.all():
+                id_towaru = 1
+            else:
+                id_towaru = Towary.objects.aggregate(Max('id_towaru')).get('id_towaru__max') + 1
             producent = form.cleaned_data['produent']
             kod_producenta = form.cleaned_data['kod_producenta']
             model = form.cleaned_data['model']
@@ -297,7 +401,10 @@ def post_plyta_glowna(request):
                            model=model, cena=cena, id_magazynu=id_magazynu)
             towar.save()
 
-            id_plyty_glownej = PlytaGlowna.objects.aggregate(Max('id_plyty_glownej')).get('id_plyty_glownej__max') + 1
+            if not PlytaGlowna.objects.all():
+                id_plyty_glownej = 1
+            else:
+                id_plyty_glownej = PlytaGlowna.objects.aggregate(Max('id_plyty_glownej')).get('id_plyty_glownej__max') + 1
             chipset = form.cleaned_data['chipset']
             standard_pamieci = form.cleaned_data['standard_pamieci']
             plyta_glowna = PlytaGlowna(id_plyty_glownej=id_plyty_glownej, chipset=chipset,
@@ -311,7 +418,10 @@ def post_karta_graficzna(request):
         form = AddKartaGraficzna(request.POST)
         print(form)
         if form.is_valid():
-            id_towaru = Towary.objects.aggregate(Max('id_towaru')).get('id_towaru__max') + 1
+            if not Towary.objects.all():
+                id_towaru = 1
+            else:
+                id_towaru = Towary.objects.aggregate(Max('id_towaru')).get('id_towaru__max') + 1
             producent = form.cleaned_data['produent']
             kod_producenta = form.cleaned_data['kod_producenta']
             model = form.cleaned_data['model']
@@ -321,7 +431,10 @@ def post_karta_graficzna(request):
                            model=model, cena=cena, id_magazynu=id_magazynu)
             towar.save()
 
-            id_karty_graficznej = KartaGraficzna.objects.aggregate(Max('id_karty_graficznej')).get(
+            if not KartaGraficzna.objects.all():
+                id_karty_graficznej = 1
+            else:
+                id_karty_graficznej = KartaGraficzna.objects.aggregate(Max('id_karty_graficznej')).get(
                 'id_karty_graficznej__max') + 1
             ilosc_pamieci = form.cleaned_data['ilosc_pamieci']
             rodzaj_pamieci = form.cleaned_data['rodzaj_pamieci']

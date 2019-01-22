@@ -3,7 +3,9 @@
 <link rel="stylesheet" type="text/css" href="{% static 'shop/style.css' %}">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
-
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
 
 <div class="header">
     <h1>Hurtownia części elektronicznych</h1>
@@ -19,15 +21,19 @@
       <li class="nav-item">
         <a class="nav-link" href="/hurtownia/">Dane hurtowni <span class="sr-only">(current)</span></a>
       </li>
-      <li class="nav-item active">
+      {% if user.username == "manager" %}
+      <li class="nav-item">
         <a class="nav-link" href="/magazines/">Magazyny</a>
       </li>
-      <li class="nav-item">
+      {% endif %}
+      <li class="nav-item active">
         <a class="nav-link" href="/workers/">Pracownicy</a>
       </li>
+      {% if user.username == "manager" %}
       <li class="nav-item">
         <a class="nav-link" href="/goods/">Towary</a>
       </li>
+      {% endif %}
       <li class="nav-item disabled">
           <p class="nav-item nav-link disabled">Zalogowany jako: {{request.user.username}}</p>
       </li>
@@ -38,38 +44,35 @@
   </div>
 </nav>
 
-<div class="container-fluid" style="margin-bottom:3rem;">
-  <form action="/post_magazine/" method="post">
-    {% csrf_token %}
-    <div class="form-group">
-      <label for="miejscowosc">Miejscowość<span style="color:red">*</span></label>
-      <input id="miejscowosc" class="form-control" type="text" name="miejscowosc">
-    </div>
-    <div class="form-group">
-      <label for="ulica">Ulica</label>
-      <input id="ulica" class="form-control" type="text" name="ulica">
-    </div>
-    <div class="form-group">
-      <label for="nr_budynku">Numer budynku<span style="color:red">*</span></label>
-      <input id="nr_budynku" class="form-control" type="text" name="nr_budynku">
-    </div>
-    <div class="form-group">
-      <label for="nr_lokalu">Numer lokalu</label>
-      <input id="nr_lokalu" class="form-control" type="text" name="nr_lokalu">
-    </div>
-    <div class="form-group">
-      <label for="kod_pocztowy">Kod pocztowy<span style="color:red">*</span></label>
-      <input id="kod_pocztowy" class="form-control" type="text" name="kod_pocztowy">
-    </div>
-    <div class="form-group">
-      <label for="powierzchnia">Powierzchnia<span style="color:red">*</span></label>
-      <input id="powierzchnia" class="form-control" type="number" step="0.01" name="powierzchnia">
-    </div>
-    <a href="/magazines/"><button type="button" class="btn btn-secondary">Anuluj</button></a>
-    <input type="submit" class="btn btn-primary" value="Dodaj">
-  </form>
-</div>
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'worker_details' pracownik.id_pracownika %}">Informacje</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link active" href="#">Wynagrodzenia</a>
+  </li>
+</ul>
 
+<div class="container-fluid">
+    <form action="{% url 'post_salary' pracownik.id_pracownika %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="kwota">Kwota<span style="color:red">*</span></label>
+          <input id="kwota" class="form-control" type="number" step="0.01" name="kwota">
+        </div>
+        <div class="form-group">
+          <label for="premia">Premia<span style="color:red">*</span></label>
+          <input id="premia" class="form-control" type="number" step="0.01" name="premia">
+        </div>
+        <input type="submit" class="btn btn-primary" value="Dodaj">
+    </form>
+    <h2>Historia: </h2>
+    {% for wynagrodzenie in wynagrodzenia %}
+    <p>Kwota: {{wynagrodzenie.kwota}}</p>
+    <p>Data: {{wynagrodzenie.data}}</p>
+    <p>Premia: {{wynagrodzenie.premia}}</p><br>
+    {% endfor %}
+</div>
 <div class="footer">
 
 </div>

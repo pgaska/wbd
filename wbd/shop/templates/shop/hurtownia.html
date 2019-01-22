@@ -15,15 +15,19 @@
       <li class="nav-item active">
         <a class="nav-link" href="/hurtownia/">Dane hurtowni <span class="sr-only">(current)</span></a>
       </li>
+      {% if user.username == "manager" %}
       <li class="nav-item">
         <a class="nav-link" href="/magazines/">Magazyny</a>
       </li>
+      {% endif %}
       <li class="nav-item">
         <a class="nav-link" href="/workers/">Pracownicy</a>
       </li>
+      {% if user.username == "manager" %}
       <li class="nav-item">
         <a class="nav-link" href="/goods/">Towary</a>
       </li>
+      {% endif %}
       <li class="nav-item disabled">
           <p class="nav-item nav-link disabled">Zalogowany jako: {{request.user.username}}</p>
       </li>
@@ -65,7 +69,7 @@
         <h2>Dane hurtowni</h2>
         <p>{{hurtownia.regon}}</p>
         <p>{{hurtownia.nip}}</p>
-        <img src="wozek.png" alt="fajny obrazek z wózkiem" width="300" height="300">
+        <img src="{% static 'shop/wozek.png' %}" alt="fajny obrazek z wózkiem" width="300" height="300">
       </div>
 
     </div>
