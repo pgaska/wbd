@@ -83,6 +83,8 @@ def post_magazine(request):
             transaction.commit('default')
 
             return redirect(magazines)
+        else:
+            return redirect(add_magazine)
 
 def magazine_details(request, id_magazynu):
     magazyn = Magazyny.objects.get(id_magazynu__iexact=id_magazynu)
@@ -319,16 +321,20 @@ def choose_type(request):
                 return redirect(add_plyta_glowna)
 
 def add_procesor(request):
-    return render(request, 'shop/add_procesor.html')
+    magazyny = Magazyny.objects.all()
+    return render(request, 'shop/add_procesor.html', {'magazyny':magazyny})
 
 def add_karta_graficzna(request):
-    return render(request, 'shop/add_karta_graficzna.html')
+    magazyny = Magazyny.objects.all()
+    return render(request, 'shop/add_karta_graficzna.html', {'magazyny':magazyny})
 
 def add_pamiec(request):
-    return render(request, 'shop/add_pamiec.html')
+    magazyny = Magazyny.objects.all()
+    return render(request, 'shop/add_pamiec.html', {'magazyny':magazyny})
 
 def add_plyta_glowna(request):
-    return render(request, 'shop/add_plyta_glowna.html')
+    magazyny = Magazyny.objects.all()
+    return render(request, 'shop/add_plyta_glowna.html', {'magazyny':magazyny})
 
 def post_procesor(request):
     if request.method == 'POST':
@@ -342,7 +348,9 @@ def post_procesor(request):
             kod_producenta = form.cleaned_data['kod_producenta']
             model = form.cleaned_data['model']
             cena = form.cleaned_data['cena']
-            id_magazynu = Magazyny.objects.all().first()
+            magazyn = form.cleaned_data['magazyn']
+            nr_magazynu = magazyn.split('.')[0]
+            id_magazynu = Magazyny.objects.filter(pk=nr_magazynu).first()
             towar = Towary(id_towaru=id_towaru, produent=producent, kod_producenta=kod_producenta,
                             model=model, cena=cena, id_magazynu=id_magazynu)
             towar.save()
@@ -359,6 +367,8 @@ def post_procesor(request):
             transaction.commit('default')
 
             return redirect(goods)
+        else:
+            return redirect(add_goods)
 
 def post_pamiec(request):
     if request.method == 'POST':
@@ -372,7 +382,9 @@ def post_pamiec(request):
             kod_producenta = form.cleaned_data['kod_producenta']
             model = form.cleaned_data['model']
             cena = form.cleaned_data['cena']
-            id_magazynu = Magazyny.objects.all().first()
+            magazyn = form.cleaned_data['magazyn']
+            nr_magazynu = magazyn.split('.')[0]
+            id_magazynu = Magazyny.objects.filter(pk=nr_magazynu).first()
             towar = Towary(id_towaru=id_towaru, produent=producent, kod_producenta=kod_producenta,
                            model=model, cena=cena,  id_magazynu=id_magazynu)
             towar.save()
@@ -387,6 +399,8 @@ def post_pamiec(request):
             pamiec.save()
 
             return redirect(goods)
+        else:
+            return redirect(add_goods)
 
 def post_plyta_glowna(request):
     if request.method == 'POST':
@@ -400,7 +414,9 @@ def post_plyta_glowna(request):
             kod_producenta = form.cleaned_data['kod_producenta']
             model = form.cleaned_data['model']
             cena = form.cleaned_data['cena']
-            id_magazynu = Magazyny.objects.all().first()
+            magazyn = form.cleaned_data['magazyn']
+            nr_magazynu = magazyn.split('.')[0]
+            id_magazynu = Magazyny.objects.filter(pk=nr_magazynu).first()
             towar = Towary(id_towaru=id_towaru, produent=producent, kod_producenta=kod_producenta,
                            model=model, cena=cena, id_magazynu=id_magazynu)
             towar.save()
@@ -416,6 +432,8 @@ def post_plyta_glowna(request):
             plyta_glowna.save()
 
             return redirect(goods)
+        else:
+            return redirect(add_goods)
 
 def post_karta_graficzna(request):
     if request.method == 'POST':
@@ -430,7 +448,9 @@ def post_karta_graficzna(request):
             kod_producenta = form.cleaned_data['kod_producenta']
             model = form.cleaned_data['model']
             cena = form.cleaned_data['cena']
-            id_magazynu = Magazyny.objects.all().first()
+            magazyn = form.cleaned_data['magazyn']
+            nr_magazynu = magazyn.split('.')[0]
+            id_magazynu = Magazyny.objects.filter(pk=nr_magazynu).first()
             towar = Towary(id_towaru=id_towaru, produent=producent, kod_producenta=kod_producenta,
                            model=model, cena=cena, id_magazynu=id_magazynu)
             towar.save()
@@ -449,6 +469,8 @@ def post_karta_graficzna(request):
             karta_graficzna.save()
 
             return redirect(goods)
+        else:
+            return redirect(add_goods)
 
 def goods_details(request, id_towaru):
     towar = get_object_or_404(Towary, pk=id_towaru)
@@ -456,7 +478,8 @@ def goods_details(request, id_towaru):
     pamiec = Pamiec.objects.filter(id_towaru__iexact=id_towaru).first()
     procesor = Procesor.objects.filter(id_towaru__iexact=id_towaru).first()
     plyta_glowna = PlytaGlowna.objects.filter(id_towaru__iexact=id_towaru).first()
-    return render(request, 'shop/goods_details.html', {'towar':towar, 'id_towaru':id_towaru, 'karta_graficzna':karta_graficzna, 'pamiec':pamiec, 'procesor':procesor, 'plyta_glowna':plyta_glowna})
+    magazyny = Magazyny.objects.all()
+    return render(request, 'shop/goods_details.html', {'magazyny':magazyny, 'towar':towar, 'id_towaru':id_towaru, 'karta_graficzna':karta_graficzna, 'pamiec':pamiec, 'procesor':procesor, 'plyta_glowna':plyta_glowna})
 
 def delete_goods(request, id_towaru):
     karta_graficzna = KartaGraficzna.objects.filter(id_towaru__iexact=id_towaru).first()
@@ -486,8 +509,11 @@ def update_goods(request, id_towaru):
                 cena = form.cleaned_data['cena']
                 liczba_rdzeni = form.cleaned_data['liczba_rdzeni']
                 taktowanie = form.cleaned_data['taktowanie']
+                magazyn = form.cleaned_data['magazyn']
+                nr_magazynu = magazyn.split('.')[0]
+                id_magazynu = Magazyny.objects.filter(pk=nr_magazynu).first()
                 Towary.objects.filter(id_towaru__iexact=id_towaru).update(produent=produent, kod_producenta=kod_producenta,
-                                                                          model=model, cena=cena)
+                                                                          model=model, cena=cena, id_magazynu=id_magazynu)
                 Procesor.objects.filter(id_towaru__iexact=id_towaru).update(liczba_rdzeni=liczba_rdzeni, taktowanie=taktowanie)
 
                 return redirect (goods)
@@ -502,9 +528,13 @@ def update_goods(request, id_towaru):
                 cena = form.cleaned_data['cena']
                 typ = form.cleaned_data['typ']
                 pojemnosc = form.cleaned_data['pojemnosc']
+                magazyn = form.cleaned_data['magazyn']
+                nr_magazynu = magazyn.split('.')[0]
+                id_magazynu = Magazyny.objects.filter(pk=nr_magazynu).first()
                 Towary.objects.filter(id_towaru__iexact=id_towaru).update(produent=produent,
                                                                           kod_producenta=kod_producenta,
-                                                                          model=model, cena=cena)
+                                                                          model=model, cena=cena,
+                                                                          id_magazynu=id_magazynu)
                 Pamiec.objects.filter(id_towaru__iexact=id_towaru).update(typ=typ, pojemnosc=pojemnosc)
 
                 return redirect(goods)
@@ -519,9 +549,13 @@ def update_goods(request, id_towaru):
                 cena = form.cleaned_data['cena']
                 chipset = form.cleaned_data['chipset']
                 standard_pamieci = form.cleaned_data['standard_pamieci']
+                magazyn = form.cleaned_data['magazyn']
+                nr_magazynu = magazyn.split('.')[0]
+                id_magazynu = Magazyny.objects.filter(pk=nr_magazynu).first()
                 Towary.objects.filter(id_towaru__iexact=id_towaru).update(produent=produent,
                                                                           kod_producenta=kod_producenta,
-                                                                          model=model, cena=cena)
+                                                                          model=model, cena=cena,
+                                                                          id_magazynu=id_magazynu)
                 PlytaGlowna.objects.filter(id_towaru__iexact=id_towaru).update(chipset=chipset, standard_pamieci=standard_pamieci)
 
                 return redirect(goods)
@@ -537,9 +571,13 @@ def update_goods(request, id_towaru):
                 ilosc_pamieci = form.cleaned_data['ilosc_pamieci']
                 rodzaj_pamieci = form.cleaned_data['rodzaj_pamieci']
                 szyna = form.cleaned_data['szyna']
+                magazyn = form.cleaned_data['magazyn']
+                nr_magazynu = magazyn.split('.')[0]
+                id_magazynu = Magazyny.objects.filter(pk=nr_magazynu).first()
                 Towary.objects.filter(id_towaru__iexact=id_towaru).update(produent=produent,
                                                                           kod_producenta=kod_producenta,
-                                                                          model=model, cena=cena)
+                                                                          model=model, cena=cena,
+                                                                          id_magazynu=id_magazynu)
                 KartaGraficzna.objects.filter(id_towaru__iexact=id_towaru).update(ilosc_pamieci=ilosc_pamieci, rodzaj_pamieci=rodzaj_pamieci, szyna=szyna)
 
                 return redirect(goods)

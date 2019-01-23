@@ -32,6 +32,7 @@ class AddProcesor(forms.Form):
     cena = forms.DecimalField(max_digits=10, decimal_places=2)
     liczba_rdzeni = forms.IntegerField()
     taktowanie = forms.FloatField()
+    magazyn = forms.CharField(max_length=100)
 
 class AddPamiec(forms.Form):
     produent = forms.CharField(max_length=60)
@@ -40,6 +41,7 @@ class AddPamiec(forms.Form):
     cena = forms.DecimalField(max_digits=10, decimal_places=2)
     typ = forms.CharField(max_length=4)
     pojemnosc = forms.IntegerField()
+    magazyn = forms.CharField(max_length=100)
 
 class AddPlytaGlowna(forms.Form):
     produent = forms.CharField(max_length=60)
@@ -48,6 +50,7 @@ class AddPlytaGlowna(forms.Form):
     cena = forms.DecimalField(max_digits=10, decimal_places=2)
     chipset = forms.CharField(max_length=15)
     standard_pamieci = forms.CharField(max_length=4)
+    magazyn = forms.CharField(max_length=100)
 
 class AddKartaGraficzna(forms.Form):
     produent = forms.CharField(max_length=60)
@@ -57,6 +60,7 @@ class AddKartaGraficzna(forms.Form):
     ilosc_pamieci = forms.IntegerField()
     rodzaj_pamieci = forms.CharField(max_length=5)
     szyna = forms.IntegerField()
+    magazyn = forms.CharField(max_length=100)
 
 class AddSalary(forms.Form):
     kwota = forms.FloatField()

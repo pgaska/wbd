@@ -40,7 +40,7 @@
   </div>
 </nav>
 
-<div class="container-fluid">
+<div class="container-fluid" style="margin-bottom:3rem;">
     <form action="/post_procesor/" method="post">
      {% csrf_token %}
      <div class="form-group">
@@ -66,6 +66,14 @@
     <div class="form-group">
       <label for="taktowanie">Taktowanie<span style="color:red">*</span></label>
       <input id="taktowanie" class="form-control" type="number" step="0.01" name="taktowanie">
+    </div>
+    <div class="form-group">
+      <label for="magazyn">Magazyn<span style="color:red">*</span></label>
+      <select id="magazyn" class="form-control" name="magazyn">
+        {% for magazyn in magazyny %}[
+        <option>{{magazyn.id_magazynu}}. {{magazyn.miejscowosc}}, {{magazyn.ulica}}</option>
+        {% endfor %}
+      </select>
     </div>
     <a href="/goods/"><button type="button" class="btn btn-secondary">Anuluj</button></a>
     <input type="submit" class="btn btn-primary" value="Dodaj">
