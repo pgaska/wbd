@@ -63,7 +63,10 @@ def post_magazine(request):
     if request.method == 'POST':
         form = AddMagazine(request.POST)
         if form.is_valid():
-            id_magazynu = Magazyny.objects.aggregate(Max('id_magazynu')).get("id_magazynu__max") + 1
+            if not Magazyny.objects.all():
+                id_magazynu = 1
+            else:
+                id_magazynu = Magazyny.objects.aggregate(Max('id_magazynu')).get("id_magazynu__max") + 1
             miejscowosc = form.cleaned_data['miejscowosc']
             ulica = form.cleaned_data['ulica']
             nr_budynku = form.cleaned_data['nr_budynku']
@@ -119,20 +122,21 @@ def magazine_goods(request, id_magazynu):
     plyty_glowne = PlytaGlowna.objects.all()
     towary = []
     for procesor in procesory:
-        towar = get_object_or_404(Towary, pk=procesor.id_towaru, id_magazynu=magazyn)
+        towar = Towary.objects.filter(pk=procesor.id_towaru, id_magazynu=magazyn).first()
         towary.append(towar)
 
     for p in pamiec:
-        towar = get_object_or_404(Towary, pk=p.id_towaru, id_magazynu=magazyn)
+        towar = Towary.objects.filter(pk=p.id_towaru, id_magazynu=magazyn).first()
         towary.append(towar)
 
     for karta_graficzna in karty_graficzne:
-        towar = get_object_or_404(Towary, pk=karta_graficzna.id_towaru, id_magazynu=magazyn)
+        towar = Towary.objects.filter(pk=karta_graficzna.id_towaru, id_magazynu=magazyn).first()
         towary.append(towar)
 
     for plyta_glowna in plyty_glowne:
-        towar = get_object_or_404(Towary, pk=plyta_glowna.id_towaru, id_magazynu=magazyn)
+        towar =Towary.objects.filter(pk=plyta_glowna.id_towaru, id_magazynu=magazyn).first()
         towary.append(towar)
+    print(towary)
     return render(request, 'shop/magazine_goods.html', {'magazyn':magazyn, 'towary':towary})
 
 def filter_magazine_goods(request, id_magazynu):
@@ -199,8 +203,8 @@ def post_worker(request):
 
             return redirect(workers)
 
-    else:
-        return redirect(add_worker)
+        else:
+            return redirect(add_worker)
 
 
 def worker_details(request, id_pracownika):

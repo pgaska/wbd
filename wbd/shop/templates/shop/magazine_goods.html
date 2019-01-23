@@ -71,6 +71,7 @@
                 </tr>
               </thead>
                 <tbody>
+                {% if towary %}
                 {% for towar in towary %}
                 <tr>
                     <th scope="row">{{ forloop.counter }}</th>
@@ -78,9 +79,12 @@
                     <td>{{towar.model}}</td>
                     <td>{{towar.kod_producenta}}</td>
                     <td>{{towar.cena}}</td>
+                    {% if towar.id_towaru %}
                     <td><a href="{% url 'goods_details' towar.id_towaru %}"><button type="button" class="btn btn-info">Szczegóły</button></a></td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
+                {% endif %}
                 </tbody>
             </table>
         </div>
