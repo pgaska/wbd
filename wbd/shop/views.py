@@ -125,20 +125,23 @@ def magazine_goods(request, id_magazynu):
     towary = []
     for procesor in procesory:
         towar = Towary.objects.filter(pk=procesor.id_towaru, id_magazynu=magazyn).first()
-        towary.append(towar)
+        if towar:
+            towary.append(towar)
 
     for p in pamiec:
         towar = Towary.objects.filter(pk=p.id_towaru, id_magazynu=magazyn).first()
-        towary.append(towar)
+        if towar:
+            towary.append(towar)
 
     for karta_graficzna in karty_graficzne:
         towar = Towary.objects.filter(pk=karta_graficzna.id_towaru, id_magazynu=magazyn).first()
-        towary.append(towar)
+        if towar:
+            towary.append(towar)
 
     for plyta_glowna in plyty_glowne:
         towar =Towary.objects.filter(pk=plyta_glowna.id_towaru, id_magazynu=magazyn).first()
-        towary.append(towar)
-    print(towary)
+        if towar:
+            towary.append(towar)
     return render(request, 'shop/magazine_goods.html', {'magazyn':magazyn, 'towary':towary})
 
 def filter_magazine_goods(request, id_magazynu):
